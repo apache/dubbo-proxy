@@ -1,5 +1,5 @@
+[English Version](README.md)  
 ### Dubbo Proxy
-[English Version](README.md)
 Dubbo Proxy是一个Dubbo网关，可以将Http请求转换成Dubbo的协议，调用Dubbo服务并且返回结果，后续还会集成熔断，限流，api管理等功能。
 
 ### 用法
@@ -18,7 +18,7 @@ http POST body如下:
     "paramValues": [
         {
             "id": 23,
-            "username": "fwjoifjwie"
+            "username": "testUser"
         }
     ]
 }

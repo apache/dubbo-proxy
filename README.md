@@ -1,5 +1,5 @@
+[中文版本](README_zh.md)  
 ## Dubbo Proxy
-[中文版本](README_zh.md)
 Dubbo Proxy, a gateway of Dubbo, switch from HTTP request to Dubbo protocol，then invoke Dubbo service and return to the result. Later Dubbo Proxy would combine several features, including circuit breaker, current-limiting, api management. 
 
 
@@ -21,7 +21,7 @@ http POST body:
     "paramValues": [
         {
             "id": 23,
-            "username": "fwjoifjwie"
+            "username": "testUser"
         }
     ]
 }
