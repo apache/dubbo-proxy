@@ -27,6 +27,7 @@ public class GenericInvoke {
     public static void init() {
         RegistryConfig registryConfig = new RegistryConfig();
         registryConfig.setAddress(registry.getUrl().getProtocol() + "://" + registry.getUrl().getAddress());
+        registryConfig.setGroup(registry.getUrl().getRawParameter(org.apache.dubbo.common.Constants.GROUP_KEY));
         applicationConfig = new ApplicationConfig();
         applicationConfig.setName("dubbo-proxy");
         applicationConfig.setRegistry(registryConfig);
