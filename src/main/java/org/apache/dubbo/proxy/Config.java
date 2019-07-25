@@ -50,7 +50,7 @@ public class Config {
     Registry getRegistry() {
         URL url = URL.valueOf(registryAddress);
         if (StringUtils.isNotEmpty(group)) {
-            url = url.addParameter(org.apache.dubbo.common.Constants.GROUP_KEY, group);
+            url = url.addParameter(org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY, group);
         }
         RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
         Registry registry = registryFactory.getRegistry(url);
