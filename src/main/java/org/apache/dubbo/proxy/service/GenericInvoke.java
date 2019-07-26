@@ -1,10 +1,12 @@
 package org.apache.dubbo.proxy.service;
 
+import org.apache.dubbo.proxy.dao.ServiceDefinition;
 import org.apache.dubbo.proxy.utils.ResultCode;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.registry.Registry;
+import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.slf4j.Logger;
@@ -36,8 +38,7 @@ public class GenericInvoke {
     private static Logger logger = LoggerFactory.getLogger(GenericInvoke.class);
 
     public static Object genericCall(String interfaceName, String group,
-                                     String version, String methodName, String[] paramTypes,
-                                     Object[] paramObjs) {
+                                     String version, ServiceDefinition serviceDefinition) {
         if (init.compareAndSet(false, true)) {
             init();
         }
@@ -46,15 +47,19 @@ public class GenericInvoke {
 
         try {
             GenericService svc = reference.get();
+            if (serviceDefinition.getAttachments() != null && !serviceDefinition.getAttachments().isEmpty()) {
+                RpcContext.getContext().setAttachments(serviceDefinition.getAttachments());
+            }
             logger.info("dubbo generic invoke, service is {}, method is {} , paramTypes is {} , paramObjs is {} , svc" +
                             " is {}.", interfaceName
-                    , methodName,paramTypes,paramObjs,svc);
-            Object result = svc.$invoke(methodName, paramTypes, paramObjs);
+                    , serviceDefinition.getMethodName(), serviceDefinition.getParamTypes(), serviceDefinition.getParamValues(), svc);
+            Object result = svc.$invoke(serviceDefinition.getMethodName(), serviceDefinition.getParamTypes(),
+                    serviceDefinition.getParamValues());
             return result;
         } catch (Exception e) {
-            logger.error("Generic invoke failed",e);
+            logger.error("Generic invoke failed", e);
             if (e instanceof RpcException) {
-                RpcException e1 = (RpcException)e;
+                RpcException e1 = (RpcException) e;
                 if (e1.isTimeout()) {
                     return ResultCode.TIMEOUT;
                 }
@@ -73,7 +78,7 @@ public class GenericInvoke {
     }
 
     private static ReferenceConfig addNewReference(String interfaceName,
-                                                     String group, String version) {
+                                                   String group, String version) {
         ReferenceConfig reference;
         String cachedKey = interfaceName + group + version;
         reference = cachedConfig.get(cachedKey);
@@ -91,7 +96,7 @@ public class GenericInvoke {
     }
 
     private static ReferenceConfig initReference(String interfaceName, String group,
-                                                String version) {
+                                                 String version) {
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
         reference.setGeneric(true);
         reference.setApplication(applicationConfig);
