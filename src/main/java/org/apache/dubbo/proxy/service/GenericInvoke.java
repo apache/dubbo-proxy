@@ -46,7 +46,8 @@ public class GenericInvoke {
 
         try {
             GenericService svc = reference.get();
-            logger.info("hsf generic invoke, service is {}, method is {} , paramTypes is {} , paramObjs is {} , svc is {}.", interfaceName
+            logger.info("dubbo generic invoke, service is {}, method is {} , paramTypes is {} , paramObjs is {} , svc" +
+                            " is {}.", interfaceName
                     , methodName,paramTypes,paramObjs,svc);
             Object result = svc.$invoke(methodName, paramTypes, paramObjs);
             return result;
