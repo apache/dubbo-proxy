@@ -1,6 +1,8 @@
 package org.apache.dubbo.proxy.server;
 
 import com.alibaba.fastjson.JSON;
+
+import com.google.common.base.Splitter;
 import org.apache.dubbo.proxy.dao.ServiceDefinition;
 import org.apache.dubbo.proxy.dao.ServiceMapping;
 import org.apache.dubbo.proxy.metadata.MetadataCollector;
@@ -30,6 +32,7 @@ public class HttpProcessHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private MetadataCollector metadataCollector;
     private ServiceMapping serviceMapping;
     private Logger logger = LoggerFactory.getLogger(HttpProcessHandler.class);
+    private Splitter queryStringSplitter = Splitter.on(",").trimResults().omitEmptyStrings();
 
 
     public HttpProcessHandler(int businessThreadCount, ServiceMapping serviceMapping, MetadataCollector metadataCollector) {
@@ -58,6 +61,8 @@ public class HttpProcessHandler extends SimpleChannelInboundHandler<FullHttpRequ
         if (path.contains("/")) {
             String application = path.split("/")[0];
             String service = path.split("/")[1];
+            String methodName = null;
+            String[] paramTypes = null;
             Map<String, List<String>> params = queryStringDecoder.parameters();
             if (params.containsKey("group")) {
                 service = params.get("group").get(0) + "/" + service;
@@ -65,13 +70,28 @@ public class HttpProcessHandler extends SimpleChannelInboundHandler<FullHttpRequ
             if (params.containsKey("version")) {
                 service = service + ":" + params.get("version").get(0);
             }
+            if (params.containsKey("methodName")) {
+                methodName = params.get("methodName").get(0);
+            }
+            if (params.containsKey("paramTypes")) {
+                @SuppressWarnings("UnstableApiUsage") List<String> paramTypesList = queryStringSplitter.splitToList(params.get("paramTypes").get(0));
+                if (!paramTypesList.isEmpty()) {
+                    paramTypes = paramTypesList.toArray(new String[]{});
+                }
+            }
             ByteBuf raw = msg.content();
             String info = raw.toString(CharsetUtil.UTF_8);
             ServiceDefinition serviceDefinition = JSON.parseObject(info, ServiceDefinition.class);
             serviceDefinition.setServiceID(service);
             serviceDefinition.setApplication(application);
+            if (methodName != null && serviceDefinition.getMethodName() == null) {
+                serviceDefinition.setMethodName(methodName);
+            }
+            if (paramTypes != null && serviceDefinition.getParamTypes() == null) {
+                serviceDefinition.setParamTypes(paramTypes);
+            }
             doRequest(ctx, serviceDefinition, msg);
-        }  else {
+        } else {
             //TODO error handle
         }
     }
