@@ -26,15 +26,16 @@ public class GenericInvoke {
         GenericInvoke.registry = registry;
     }
 
-    public static void init() {
+    private static void init() {
         RegistryConfig registryConfig = new RegistryConfig();
         registryConfig.setAddress(registry.getUrl().getProtocol() + "://" + registry.getUrl().getAddress());
+        registryConfig.setGroup(registry.getUrl().getParameter(org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY));
         applicationConfig = new ApplicationConfig();
         applicationConfig.setName("dubbo-proxy");
         applicationConfig.setRegistry(registryConfig);
     }
 
-    private static ConcurrentHashMap<String, ReferenceConfig> cachedConfig = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, ReferenceConfig<GenericService>> cachedConfig = new ConcurrentHashMap<>();
     private static Logger logger = LoggerFactory.getLogger(GenericInvoke.class);
 
     public static Object genericCall(String interfaceName, String group,
@@ -42,7 +43,7 @@ public class GenericInvoke {
         if (init.compareAndSet(false, true)) {
             init();
         }
-        ReferenceConfig<GenericService> reference = null;
+        ReferenceConfig<GenericService> reference;
         reference = addNewReference(interfaceName, group, version);
 
         try {
@@ -52,10 +53,9 @@ public class GenericInvoke {
             }
             logger.info("dubbo generic invoke, service is {}, method is {} , paramTypes is {} , paramObjs is {} , svc" +
                             " is {}.", interfaceName
-                    , serviceDefinition.getMethodName(), serviceDefinition.getParamTypes(), serviceDefinition.getParamValues(), svc);
-            Object result = svc.$invoke(serviceDefinition.getMethodName(), serviceDefinition.getParamTypes(),
-                    serviceDefinition.getParamValues());
-            return result;
+
+                    , methodName,paramTypes,paramObjs,svc);
+            return svc.$invoke(methodName, paramTypes, paramObjs);
         } catch (Exception e) {
             logger.error("Generic invoke failed", e);
             if (e instanceof RpcException) {
@@ -77,9 +77,10 @@ public class GenericInvoke {
         }
     }
 
-    private static ReferenceConfig addNewReference(String interfaceName,
-                                                   String group, String version) {
-        ReferenceConfig reference;
+
+    private static ReferenceConfig<GenericService> addNewReference(String interfaceName,
+                                                                   String group, String version) {
+        ReferenceConfig<GenericService> reference;
         String cachedKey = interfaceName + group + version;
         reference = cachedConfig.get(cachedKey);
         if (reference == null) {
@@ -95,8 +96,9 @@ public class GenericInvoke {
         return reference;
     }
 
-    private static ReferenceConfig initReference(String interfaceName, String group,
-                                                 String version) {
+
+    private static ReferenceConfig<GenericService> initReference(String interfaceName, String group,
+                                                                 String version) {
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
         reference.setGeneric(true);
         reference.setApplication(applicationConfig);

@@ -1,6 +1,7 @@
 package org.apache.dubbo.proxy.worker;
 
 import com.alibaba.fastjson.JSON;
+
 import org.apache.dubbo.proxy.dao.ServiceDefinition;
 import org.apache.dubbo.proxy.dao.ServiceMapping;
 import org.apache.dubbo.proxy.metadata.MetadataCollector;
@@ -33,7 +34,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 
-public class RequestWorker implements Runnable{
+public class RequestWorker implements Runnable {
 
     private ServiceDefinition serviceDefinition;
     private ChannelHandlerContext ctx;
@@ -60,7 +61,7 @@ public class RequestWorker implements Runnable{
         String interfaze = Tool.getInterface(serviceID);
         String group = Tool.getGroup(serviceID);
         String version = Tool.getVersion(serviceID);
-        if (serviceDefinition.getParamTypes() == null) {
+        if (serviceDefinition.getParamTypes() == null && serviceDefinition.getParamValues() != null) {
             String[] types = getTypesFromMetadata(serviceDefinition.getApplication(), interfaze, group, version,
                     serviceDefinition.getMethodName(), serviceDefinition.getParamValues().length);
             serviceDefinition.setParamTypes(types);
@@ -102,7 +103,7 @@ public class RequestWorker implements Runnable{
             Set<Cookie> cookies = ServerCookieDecoder.STRICT.decode(cookieString);
             if (!cookies.isEmpty()) {
                 // Reset the cookies if necessary.
-                for (Cookie cookie: cookies) {
+                for (Cookie cookie : cookies) {
                     response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
                 }
             }
@@ -118,7 +119,7 @@ public class RequestWorker implements Runnable{
         MetadataIdentifier identifier = new MetadataIdentifier(interfaze, version, group, Constants.PROVIDER_SIDE, application);
         String metadata = metadataCollector.getProviderMetaData(identifier);
         FullServiceDefinition serviceDefinition = JSON.parseObject(metadata, FullServiceDefinition.class);
-        List<MethodDefinition> methods  = serviceDefinition.getMethods();
+        List<MethodDefinition> methods = serviceDefinition.getMethods();
         if (methods != null) {
             for (MethodDefinition m : methods) {
                 if (Tool.sameMethod(m, methodName, paramLen)) {
