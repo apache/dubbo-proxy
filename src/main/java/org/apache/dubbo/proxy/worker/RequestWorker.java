@@ -69,8 +69,7 @@ public class RequestWorker implements Runnable {
         Object result;
         try {
             result = GenericInvoke.genericCall(interfaze,group, version,
-                    serviceDefinition.getMethodName(),
-                    serviceDefinition.getParamTypes(), serviceDefinition.getParamValues());
+                    serviceDefinition);
         } catch (Exception e) {
             e.printStackTrace();
             result = e;
