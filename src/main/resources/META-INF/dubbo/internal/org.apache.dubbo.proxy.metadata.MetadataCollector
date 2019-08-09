@@ -1,1 +1,2 @@
 zookeeper=org.apache.dubbo.proxy.metadata.impl.ZookeeperMetadataCollector
+nacos=org.apache.dubbo.proxy.metadata.impl.NacosMetadataCollector

@@ -1,8 +1,8 @@
 netty.port: 8000
 business.thread.count: 100
-proxy.registry.address: zookeeper://127.0.0.1:2181
+proxy.registry.address: nacos://127.0.0.1:8848
 proxy.registry.group: dubbo
-proxy.metadata-report.address: zookeeper://127.0.0.1:2181
+proxy.metadata-report.address: nacos://127.0.0.1:8848
 
 
 
