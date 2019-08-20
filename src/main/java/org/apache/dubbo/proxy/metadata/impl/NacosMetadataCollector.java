@@ -21,6 +21,7 @@ public class NacosMetadataCollector implements MetadataCollector {
     private ConfigService configService;
     private String group;
     private URL url;
+    private final static String DEFAULT_ROOT = "dubbo";
     @Override
     public void setUrl(URL url) {
         this.url = url;
@@ -33,7 +34,7 @@ public class NacosMetadataCollector implements MetadataCollector {
 
     @Override
     public void init() {
-        group = url.getParameter(Constants.GROUP_KEY, "DEFAULT_GROUP");
+        group = url.getParameter(Constants.GROUP_KEY, DEFAULT_ROOT);
 
         configService = buildConfigService(url);
     }
