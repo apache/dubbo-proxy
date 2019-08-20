@@ -50,7 +50,9 @@ public class GenericInvoke {
             logger.info("dubbo generic invoke, service is {}, method is {} , paramTypes is {} , paramObjs is {} , svc" +
                             " is {}.", interfaceName
                     , methodName,paramTypes,paramObjs,svc);
-            return svc.$invoke(methodName, paramTypes, paramObjs);
+            Object obj = svc.$invoke(methodName, paramTypes, paramObjs);
+            logger.debug("invoke ret: {}",obj);
+            return obj;
         } catch (Exception e) {
             logger.error("Generic invoke failed",e);
             if (e instanceof RpcException) {

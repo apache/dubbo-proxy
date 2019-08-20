@@ -117,7 +117,7 @@ public class RequestWorker implements Runnable {
     }
 
     private String[] getTypesFromMetadata(String application, String interfaze, String group, String version, String methodName, int paramLen) {
-        MetadataIdentifier identifier = new MetadataIdentifier(interfaze, version, group, Constants.PROVIDER_SIDE, application);
+        MetadataIdentifier identifier = new MetadataIdentifier(interfaze, version, null, Constants.PROVIDER_SIDE, application);
         String metadata = metadataCollector.getProviderMetaData(identifier);
         FullServiceDefinition serviceDefinition = JSON.parseObject(metadata, FullServiceDefinition.class);
         List<MethodDefinition> methods = serviceDefinition.getMethods();
