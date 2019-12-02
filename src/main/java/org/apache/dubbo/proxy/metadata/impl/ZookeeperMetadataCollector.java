@@ -1,5 +1,6 @@
 package org.apache.dubbo.proxy.metadata.impl;
 
+import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.proxy.metadata.MetadataCollector;
 import org.apache.dubbo.proxy.utils.Constants;
 import org.apache.curator.framework.CuratorFramework;
@@ -63,7 +64,11 @@ public class ZookeeperMetadataCollector implements MetadataCollector {
         try {
             String path = getNodePath(identifier);
             if (client.checkExists().forPath(path) == null) {
-                return null;
+                //截取掉/service.data,用于兼容新版本的dubbo 2.7.3+
+                path = path.substring(0, path.lastIndexOf(METADATA_NODE_NAME) - 1);
+                if (client.checkExists().forPath(path) == null) {
+                    return null;
+                }
             }
             return new String(client.getData().forPath(path));
         } catch (Exception e) {
