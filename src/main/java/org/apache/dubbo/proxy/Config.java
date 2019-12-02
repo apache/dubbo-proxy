@@ -64,6 +64,8 @@ public class Config {
             URL metadataUrl = URL.valueOf(metadataAddress);
             metaDataCollector = ExtensionLoader.getExtensionLoader(MetadataCollector.class).
                     getExtension(metadataUrl.getProtocol());
+            metaDataCollector.setUrl(metadataUrl);
+            metaDataCollector.init();
         }
         return metaDataCollector;
     }
