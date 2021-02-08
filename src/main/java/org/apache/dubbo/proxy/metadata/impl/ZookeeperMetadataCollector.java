@@ -1,5 +1,6 @@
 package org.apache.dubbo.proxy.metadata.impl;
 
+import org.apache.dubbo.metadata.report.identifier.KeyTypeEnum;
 import org.apache.dubbo.proxy.metadata.MetadataCollector;
 import org.apache.dubbo.proxy.utils.Constants;
 import org.apache.curator.framework.CuratorFramework;
@@ -8,7 +9,7 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.metadata.identifier.MetadataIdentifier;
+import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 
 public class ZookeeperMetadataCollector implements MetadataCollector {
 
@@ -47,7 +48,7 @@ public class ZookeeperMetadataCollector implements MetadataCollector {
     }
 
     private String getNodePath(MetadataIdentifier metadataIdentifier) {
-        return toRootDir() + metadataIdentifier.getUniqueKey(MetadataIdentifier.KeyTypeEnum.PATH) +
+        return toRootDir() + metadataIdentifier.getUniqueKey(KeyTypeEnum.PATH) +
                 Constants.PATH_SEPARATOR + METADATA_NODE_NAME;
     }
 
