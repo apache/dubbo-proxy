@@ -23,7 +23,7 @@ import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import io.netty.util.CharsetUtil;
 import org.apache.dubbo.metadata.definition.model.FullServiceDefinition;
 import org.apache.dubbo.metadata.definition.model.MethodDefinition;
-import org.apache.dubbo.metadata.identifier.MetadataIdentifier;
+import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class RequestWorker implements Runnable {
                     serviceDefinition.getMethodName(),
                     serviceDefinition.getParamTypes(), serviceDefinition.getParamValues());
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             result = e;
         }
         if (!writeResponse(ctx, result)) {

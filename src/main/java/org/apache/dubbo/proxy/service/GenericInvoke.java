@@ -1,9 +1,9 @@
 package org.apache.dubbo.proxy.service;
 
-import org.apache.dubbo.proxy.utils.ResultCode;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.proxy.utils.ResultCode;
 import org.apache.dubbo.registry.Registry;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.service.GenericService;
@@ -47,9 +47,8 @@ public class GenericInvoke {
 
         try {
             GenericService svc = reference.get();
-            logger.info("dubbo generic invoke, service is {}, method is {} , paramTypes is {} , paramObjs is {} , svc" +
-                            " is {}.", interfaceName
-                    , methodName,paramTypes,paramObjs,svc);
+            logger.info("dubbo generic invoke, service is {}, method is {} , paramTypes is {} , paramObjs is {} , svc is {}.",
+                    interfaceName, methodName, paramTypes, paramObjs, svc);
             return svc.$invoke(methodName, paramTypes, paramObjs);
         } catch (Exception e) {
             logger.error("Generic invoke failed",e);
@@ -74,6 +73,7 @@ public class GenericInvoke {
 
     private static ReferenceConfig<GenericService> addNewReference(String interfaceName,
                                                                    String group, String version) {
+
         ReferenceConfig<GenericService> reference;
         String cachedKey = interfaceName + group + version;
         reference = cachedConfig.get(cachedKey);
